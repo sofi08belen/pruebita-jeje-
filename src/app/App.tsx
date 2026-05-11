@@ -1,4 +1,4 @@
-import backgroundImage from "../imports/image.png";
+import backgroundImage from "../assets/image.png";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 
