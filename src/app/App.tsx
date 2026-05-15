@@ -1,4 +1,12 @@
-// import backgroundImage from "../assets/image.png";
+// If the image file is missing during build, fall back to no background image.
+declare const require: any;
+let backgroundImage: string | undefined;
+try {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  backgroundImage = require("../assets/image.png");
+} catch (e) {
+  backgroundImage = undefined;
+}
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 
