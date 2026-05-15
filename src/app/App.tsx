@@ -1,6 +1,6 @@
 declare module "*.png";
 
-import backgroundImage from "../import/image.png";
+import backgroundImage from "../imports/image.png";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 
