@@ -3,6 +3,8 @@ declare module "*.png";
 import backgroundImage from "../imports/image.png";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
+import Register from "./components/Register"; // ← LÍNEA AGREGADA
+
 
 // Componente de texto tipo máquina de escribir
 function TypewriterText({
@@ -155,6 +157,8 @@ function Sparkles() {
 }
 
 export default function App() {
+  const [showRegister, setShowRegister] = useState(false);
+
   return (
     <div
       className="size-full flex flex-col items-center justify-center relative overflow-hidden"
@@ -263,6 +267,7 @@ export default function App() {
 
 
           <motion.button
+          onClick={() => setShowRegister(true)}
             className="px-8 py-3 bg-transparent text-white border-2 border-white rounded-full text-lg relative overflow-hidden"
             style={{
               fontFamily: "Syne, sans-serif",
@@ -276,14 +281,26 @@ export default function App() {
             whileTap={{ scale: 0.95 }}
           >
             <motion.span
+            
               className="absolute inset-0 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 opacity-0"
               whileHover={{ opacity: 0.2 }}
               transition={{ duration: 0.3 }}
             ></motion.span>
+            
             <span className="relative">Regístrate</span>
           </motion.button>
         </motion.div>
       </div>
+    {showRegister && (
+        <div
+          className="absolute inset-0 z-50 flex items-center justify-center bg-black/60"
+          onClick={() => setShowRegister(false)}
+        >
+          <div onClick={(e) => e.stopPropagation()}>
+            <Register />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
