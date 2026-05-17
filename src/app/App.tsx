@@ -4,7 +4,7 @@ import backgroundImage from "../imports/image.png";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import Register from "./components/Register"; // ← LÍNEA AGREGADA
-
+import Login from "./components/Login";     
 
 // Componente de texto tipo máquina de escribir
 function TypewriterText({
@@ -158,6 +158,7 @@ function Sparkles() {
 
 export default function App() {
   const [showRegister, setShowRegister] = useState(false);
+   const [showLogin, setShowLogin] = useState(false);
 
   return (
     <div
@@ -250,6 +251,7 @@ export default function App() {
               fontFamily: "Syne, sans-serif",
               fontWeight: 600,
             }}
+             onClick={() => setShowLogin(true)}
             whileHover={{
               scale: 1.05,
               boxShadow: "0 0 30px rgba(255, 255, 255, 0.8)",
@@ -298,6 +300,16 @@ export default function App() {
         >
           <div onClick={(e) => e.stopPropagation()}>
             <Register />
+          </div>
+        </div>
+      )}
+      {showLogin && (
+        <div
+          className="absolute inset-0 z-50 flex items-center justify-center bg-black/60"
+          onClick={() => setShowLogin(false)}
+        >
+          <div onClick={(e) => e.stopPropagation()}>
+            <Login />
           </div>
         </div>
       )}
