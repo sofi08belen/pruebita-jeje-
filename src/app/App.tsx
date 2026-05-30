@@ -3,8 +3,8 @@ declare module "*.png";
 import backgroundImage from "../imports/image.png";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
-import Register from "./components/Register"; // ← LÍNEA AGREGADA
-import Login from "./components/Login";     
+import Register from "../pages/Register"; // ← LÍNEA AGREGADA
+import Login from "../pages/Login";     
 
 // Componente de texto tipo máquina de escribir
 function TypewriterText({
