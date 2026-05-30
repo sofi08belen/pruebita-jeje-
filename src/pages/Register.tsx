@@ -7,6 +7,8 @@ export default function Register() {
   const [showPass, setShowPass] = useState(false);
   const [errors, setErrors] = useState({ nombre: "", email: "", password: "" });
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [serverError, setServerError] = useState("");
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -32,16 +34,38 @@ export default function Register() {
     return !newErrors.nombre && !newErrors.email && !newErrors.password;
   }
 
-  function handleSubmit() {
-    if (validate()) {
+  async function handleSubmit() {
+    setServerError("");
+    if (!validate()) return;
+    setLoading(true);
+    try {
+      const response = await fetch("http://localhost:3001/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nombre, email, password }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        if (response.status === 409) {
+          setErrors((prev) => ({ ...prev, email: "Ya existe una cuenta con este correo." }));
+        } else {
+          setServerError(data.error || "Error al crear la cuenta.");
+        }
+        return;
+      }
       setSubmitted(true);
+    } catch (err) {
+      setServerError("No se pudo conectar con el servidor. ¿Está corriendo el backend?");
+    } finally {
+      setLoading(false);
     }
   }
 
   if (submitted) {
     return (
       <div style={styles.wrap}>
-        <p style={styles.title}>¡Bienvenido, {nombre}! 🎉</p>
+        <div style={styles.logo}>🎉</div>
+        <p style={styles.title}>¡Bienvenido a AURA, {nombre}!</p>
         <p style={styles.sub}>Tu cuenta fue creada correctamente.</p>
       </div>
     );
@@ -53,78 +77,45 @@ export default function Register() {
       <h1 style={styles.title}>Crear cuenta</h1>
       <p style={styles.sub}>Completa los datos para registrarte</p>
 
-      {/* Nombre */}
+      {serverError && <div style={styles.serverError}>⚠️ {serverError}</div>}
+
       <div style={styles.field}>
         <label style={styles.label} htmlFor="nombre">Nombre completo</label>
-        <input
-          id="nombre"
-          type="text"
-          placeholder="Ej: María López"
-          value={nombre}
-          onChange={(e) => setNombre(e.target.value)}
-          style={{ ...styles.input, ...(errors.nombre ? styles.inputError : {}) }}
-          autoComplete="name"
-        />
+        <input id="nombre" type="text" placeholder="Ej: María López" value={nombre}
+          onChange={(e) => setNombre(e.target.value)} disabled={loading}
+          style={{ ...styles.input, ...(errors.nombre ? styles.inputError : {}) }} autoComplete="name" />
         {errors.nombre && <p style={styles.error}>{errors.nombre}</p>}
       </div>
 
-      {/* Correo */}
       <div style={styles.field}>
         <label style={styles.label} htmlFor="email">Correo electrónico</label>
-        <input
-          id="email"
-          type="email"
-          placeholder="nombre@ejemplo.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          style={{ ...styles.input, ...(errors.email ? styles.inputError : {}) }}
-          autoComplete="email"
-        />
+        <input id="email" type="email" placeholder="nombre@ejemplo.com" value={email}
+          onChange={(e) => setEmail(e.target.value)} disabled={loading}
+          style={{ ...styles.input, ...(errors.email ? styles.inputError : {}) }} autoComplete="email" />
         {errors.email && <p style={styles.error}>{errors.email}</p>}
       </div>
 
-      {/* Contraseña */}
       <div style={styles.field}>
         <label style={styles.label} htmlFor="password">Contraseña</label>
         <div style={styles.inputWrap}>
-          <input
-            id="password"
-            type={showPass ? "text" : "password"}
-            placeholder="Mínimo 8 caracteres"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            style={{
-              ...styles.input,
-              paddingRight: "2.5rem",
-              ...(errors.password ? styles.inputError : {}),
-            }}
-            autoComplete="new-password"
-          />
-          <button
-            type="button"
-            onClick={() => setShowPass(!showPass)}
-            style={styles.toggleBtn}
-            aria-label={showPass ? "Ocultar contraseña" : "Mostrar contraseña"}
-          >
+          <input id="password" type={showPass ? "text" : "password"} placeholder="Mínimo 8 caracteres"
+            value={password} onChange={(e) => setPassword(e.target.value)} disabled={loading}
+            style={{ ...styles.input, paddingRight: "2.5rem", ...(errors.password ? styles.inputError : {}) }}
+            autoComplete="new-password" />
+          <button type="button" onClick={() => setShowPass(!showPass)} style={styles.toggleBtn}>
             {showPass ? "🙈" : "👁️"}
           </button>
         </div>
-
         {password.length > 0 && (
           <>
             <div style={styles.strengthBar}>
               {[0, 1, 2, 3].map((i) => (
-                <span
-                  key={i}
-                  style={{
-                    ...styles.strengthSegment,
-                    background: i < strength
-                      ? strengthClass === "weak" ? "#ef4444"
-                        : strengthClass === "medium" ? "#f59e0b"
-                        : "#10b981"
-                      : "#e5e7eb",
-                  }}
-                />
+                <span key={i} style={{
+                  ...styles.strengthSegment,
+                  background: i < strength
+                    ? strengthClass === "weak" ? "#ef4444" : strengthClass === "medium" ? "#f59e0b" : "#10b981"
+                    : "#e5e7eb",
+                }} />
               ))}
             </div>
             <p style={styles.strengthLabel}>{strengthLabels[strength]}</p>
@@ -133,132 +124,32 @@ export default function Register() {
         {errors.password && <p style={styles.error}>{errors.password}</p>}
       </div>
 
-      <button onClick={handleSubmit} style={styles.submitBtn}>
-        Crear cuenta
+      <button onClick={handleSubmit} style={{ ...styles.submitBtn, opacity: loading ? 0.7 : 1 }} disabled={loading}>
+        {loading ? "Creando cuenta..." : "Crear cuenta"}
       </button>
 
-      <p style={styles.loginLink}>
-        ¿Ya tienes cuenta?{" "}
-        <a href="/login" style={styles.link}>Inicia sesión aquí</a>
-      </p>
+      <p style={styles.loginLink}>¿Ya tienes cuenta? <a href="#" style={styles.link}>Inicia sesión aquí</a></p>
     </div>
   );
 }
 
 const styles: Record<string, React.CSSProperties> = {
-  wrap: {
-    maxWidth: 420,
-    width: "100%",
-    background: "#ffffff",
-    border: "1px solid #e5e7eb",
-    borderRadius: 12,
-    padding: "2rem",
-    margin: "2rem auto",
-    fontFamily: "sans-serif",
-  },
-  logo: {
-    width: 40,
-    height: 40,
-    borderRadius: "50%",
-    background: "#eff6ff",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    margin: "0 auto 1.25rem",
-    fontSize: 20,
-  },
-  title: {
-    textAlign: "center",
-    fontSize: 20,
-    fontWeight: 600,
-    color: "#111827",
-    marginBottom: "0.25rem",
-  },
-  sub: {
-    textAlign: "center",
-    fontSize: 13,
-    color: "#6b7280",
-    marginBottom: "1.75rem",
-  },
-  field: {
-    marginBottom: "1rem",
-  },
-  label: {
-    display: "block",
-    fontSize: 13,
-    fontWeight: 500,
-    color: "#374151",
-    marginBottom: 6,
-  },
-  input: {
-    width: "100%",
-    padding: "0.55rem 0.75rem",
-    fontSize: 14,
-    border: "1px solid #d1d5db",
-    borderRadius: 8,
-    outline: "none",
-    background: "#fff",
-    color: "#111827",
-    boxSizing: "border-box",
-  },
-  inputError: {
-    borderColor: "#ef4444",
-  },
-  inputWrap: {
-    position: "relative",
-    display: "flex",
-    alignItems: "center",
-  },
-  toggleBtn: {
-    position: "absolute",
-    right: 10,
-    background: "none",
-    border: "none",
-    cursor: "pointer",
-    fontSize: 16,
-    padding: 0,
-  },
-  strengthBar: {
-    display: "flex",
-    gap: 4,
-    marginTop: 6,
-  },
-  strengthSegment: {
-    flex: 1,
-    height: 3,
-    borderRadius: 2,
-    transition: "background 0.3s",
-  },
-  strengthLabel: {
-    fontSize: 11,
-    color: "#9ca3af",
-    marginTop: 4,
-  },
-  error: {
-    fontSize: 11,
-    color: "#ef4444",
-    marginTop: 4,
-  },
-  submitBtn: {
-    width: "100%",
-    marginTop: "1.5rem",
-    padding: "0.65rem 1rem",
-    fontSize: 15,
-    fontWeight: 500,
-    background: "#3b82f6",
-    color: "#ffffff",
-    border: "none",
-    borderRadius: 8,
-    cursor: "pointer",
-  },
-  loginLink: {
-    textAlign: "center",
-    fontSize: 13,
-    color: "#6b7280",
-    marginTop: "1.25rem",
-  },
-  link: {
-    color: "#3b82f6",
-    textDecoration: "none",
-  },
+  wrap: { maxWidth: 420, width: "100%", background: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 12, padding: "2rem", margin: "2rem auto", fontFamily: "sans-serif" },
+  logo: { width: 40, height: 40, borderRadius: "50%", background: "#eff6ff", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 1.25rem", fontSize: 20 },
+  title: { textAlign: "center", fontSize: 20, fontWeight: 600, color: "#111827", marginBottom: "0.25rem" },
+  sub: { textAlign: "center", fontSize: 13, color: "#6b7280", marginBottom: "1.75rem" },
+  field: { marginBottom: "1rem" },
+  label: { display: "block", fontSize: 13, fontWeight: 500, color: "#374151", marginBottom: 6 },
+  input: { width: "100%", padding: "0.55rem 0.75rem", fontSize: 14, border: "1px solid #d1d5db", borderRadius: 8, outline: "none", background: "#fff", color: "#111827", boxSizing: "border-box" },
+  inputError: { borderColor: "#ef4444" },
+  inputWrap: { position: "relative", display: "flex", alignItems: "center" },
+  toggleBtn: { position: "absolute", right: 10, background: "none", border: "none", cursor: "pointer", fontSize: 16, padding: 0 },
+  strengthBar: { display: "flex", gap: 4, marginTop: 6 },
+  strengthSegment: { flex: 1, height: 3, borderRadius: 2, transition: "background 0.3s" },
+  strengthLabel: { fontSize: 11, color: "#9ca3af", marginTop: 4 },
+  error: { fontSize: 11, color: "#ef4444", marginTop: 4 },
+  serverError: { background: "#fef2f2", border: "1px solid #fecaca", borderRadius: 8, padding: "0.6rem 0.85rem", fontSize: 13, color: "#b91c1c", marginBottom: "1rem" },
+  submitBtn: { width: "100%", marginTop: "1.5rem", padding: "0.65rem 1rem", fontSize: 15, fontWeight: 500, background: "#3b82f6", color: "#ffffff", border: "none", borderRadius: 8, cursor: "pointer" },
+  loginLink: { textAlign: "center", fontSize: 13, color: "#6b7280", marginTop: "1.25rem" },
+  link: { color: "#3b82f6", textDecoration: "none" },
 };

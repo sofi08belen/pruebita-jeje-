@@ -8,4 +8,14 @@
   Run `npm i` to install the dependencies.
 
   Run `npm run dev` to start the development server.
+
+
+ USA ESTE 
+
+
+
+ 
+  cd "C:\xampp5\htdocs\PROTOTIPO DE PROYECTO AURA\Aura Oficial"
+>> npm run dev
+
   
