@@ -1,9 +1,8 @@
 import backgroundImage from "../imports/image.png";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
-import { RegistroForm } from "./components/RegistroForm";
-import { LoginForm } from "./components/LoginForm";
-
+import { RegistroForm } from "../pages/Register";
+import { LoginForm } from "../pages/Login";
 // ── Typewriter ──────────────────────────────────────────────
 function TypewriterText({ text, delay = 0 }: { text: string; delay?: number }) {
   const [displayedText, setDisplayedText] = useState("");

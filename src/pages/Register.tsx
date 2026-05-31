@@ -1,6 +1,6 @@
 import { motion } from 'motion/react';
 import { useState } from 'react';
-import videoBackground from '../imports/Modern_Kids_Craft_Ideas_to_Refresh_Your_Routine_-_Pin-482940760053419111.mp4';
+import videoBackground from "../imports/Modern_Kids_Craft_Ideas_to_Refresh_Your_Routine_-_Pin-482940760053419111.mp4";
 
 interface RegistroFormProps {
   onVolver: () => void;
