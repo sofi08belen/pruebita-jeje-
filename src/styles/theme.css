@@ -178,4 +178,30 @@
     font-weight: var(--font-weight-normal);
     line-height: 1.5;
   }
+
+  /* Estilos para placeholders del formulario de registro */
+  input::placeholder {
+    color: #A3A3C2;
+    opacity: 1;
+  }
+
+  input::-webkit-input-placeholder {
+    color: #A3A3C2;
+    opacity: 1;
+  }
+
+  input::-moz-placeholder {
+    color: #A3A3C2;
+    opacity: 1;
+  }
+
+  input:-ms-input-placeholder {
+    color: #A3A3C2;
+    opacity: 1;
+  }
+
+  /* Estilos para el video de fondo */
+  video {
+    object-fit: cover;
+  }
 }
