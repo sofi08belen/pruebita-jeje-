@@ -10,12 +10,22 @@
   Run `npm run dev` to start the development server.
 
 
- USA ESTE 
+
+-----------------------PARA VER LA PAGINA ------------------
+
+terminal uno pegar : 
+
+cd "C:\xampp5\htdocs\PROTOTIPO DE PROYECTO AURA\Aura Oficial\backend"
+>> node server.js
+
+------------------------------------------------------------------------
+
+luego dividir terminal y pegar 
 
 
-
- 
-  cd "C:\xampp5\htdocs\PROTOTIPO DE PROYECTO AURA\Aura Oficial"
+cd "C:\xampp5\htdocs\PROTOTIPO DE PROYECTO AURA\Aura Oficial"
 >> npm run dev
+
+---------------------------------------------------------------------
 
   
