@@ -3,7 +3,10 @@ import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { RegistroForm } from "../pages/Register";
 import { LoginForm } from "../pages/Login";
+
+
 // ── Typewriter ──────────────────────────────────────────────
+
 function TypewriterText({ text, delay = 0 }: { text: string; delay?: number }) {
   const [displayedText, setDisplayedText] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -14,7 +17,7 @@ function TypewriterText({ text, delay = 0 }: { text: string; delay?: number }) {
         setDisplayedText(text.slice(0, currentIndex + 1));
         setCurrentIndex(currentIndex + 1);
       }
-    }, delay + currentIndex * 2);
+    }, delay + currentIndex * 30);
     return () => clearTimeout(timer);
   }, [currentIndex, text, delay]);
 
@@ -24,7 +27,7 @@ function TypewriterText({ text, delay = 0 }: { text: string; delay?: number }) {
       style={{ fontFamily: "Syne, sans-serif", fontWeight: 400 }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 5, delay: delay / 1000 }}
+      transition={{ duration: 0.5, delay: delay / 1000 }}
     >
       {displayedText}
       <motion.span
@@ -35,6 +38,9 @@ function TypewriterText({ text, delay = 0 }: { text: string; delay?: number }) {
     </motion.p>
   );
 }
+
+
+
 
 // ── Partículas ──────────────────────────────────────────────
 function FloatingParticles() {
@@ -131,7 +137,7 @@ export default function App() {
           >
             AURA
           </motion.h1>
-          <TypewriterText text="Toma decisiones y construye tu camino paso a paso" delay={1500} />
+          <TypewriterText text="Toma decisiones y construye tu camino paso a paso" delay={700} />
         </motion.div>
 
         <motion.div className="flex gap-4"
