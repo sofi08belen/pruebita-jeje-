@@ -1,4 +1,6 @@
-import backgroundImage from "../imports/image.png";
+// Use require to avoid missing type declarations for image imports
+// @ts-ignore
+const backgroundImage = require("../imports/image.png");
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { RegistroForm } from "../pages/Register";
